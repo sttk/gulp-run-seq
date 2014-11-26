@@ -10,6 +10,7 @@ var grunseq = new function() {
 
 
   var _runInfos = [];
+  var _runnedTasks = {};
 
   function Runner() {}
   Runner.prototype = gulp;
@@ -21,12 +22,21 @@ var grunseq = new function() {
     return null;
   }
 
-  function _findInfoByRunnedTask(taskname) {
+  function _findInfoByRunningTask(taskname) {
     for (var i=0; i<_runInfos.length; i++) {
       var info = _runInfos[i];
       if (info.runner.seq.indexOf(taskname) >= 0) { return info; }
     }
     return null;
+  }
+
+  function _isAlreadyRunned(taskname) {
+    return (taskname in _runnedTasks);
+  }
+
+  function _collectRunnedTasks(info) {
+    var seq = info.runner.seq;
+    for (var j=0; j<seq.length; j++) { _runnedTasks[seq[j]] = true; }
   }
 
   function _clearInfo(info) {
@@ -67,11 +77,15 @@ var grunseq = new function() {
     var parallels = [];
     for (var i=0; i<tasklist.length; i++) {
       var taskname = tasklist[i];
-      if (_findInfoByRunnedTask(taskname) != null) { continue; }
+      if (_isAlreadyRunned(taskname)) { continue; }
       parallels.push(taskname);
       info.running[taskname] = {};
     }
+    if (parallels.length === 0) { _next(info); return; }
+
+    _collectRunnedTasks(info);
     gulp.start.apply(info.runner, parallels);
+    _collectRunnedTasks(info);
   }
 
   var _emptyFn = function() {};
@@ -142,7 +156,7 @@ var grunseq = new function() {
   };
 
   function _ender(taskname) {
-    var info = _findInfoByRunnedTask(taskname);
+    var info = _findInfoByRunningTask(taskname);
     if (info != null) { return new Ender(info.runner, taskname); }
     return _nowaitFn;
   }
