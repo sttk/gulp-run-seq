@@ -53,9 +53,9 @@ gulp.task('task4', function() {
 });
 ```
 
-This example executes tasks in order of task1, task2/task3, task4 by default task. If an array of task names is specified as an argument, the tasks in the array are executed in parallel and a next task is executed after all of these tasks end.
+This example executes tasks in order of task1, task2/task3, task4 by default task. If an array of task names is specified as an argument, the tasks in the array are executed in no order and a next task is executed after all of these tasks end.
 
-### Waits streaming process
+### Wait streaming process
 
 If you want to make a task wait until its streaming processes end, write like a following example:
 
@@ -89,7 +89,7 @@ gulp.task('task1', function() {
 });
 ```
 
-### Waits dependent tasks
+### Wait dependent tasks
 
 If you want to make a task wait until its dependent tasks, write like a following example:
 
@@ -152,9 +152,9 @@ gulp.task('task2.2', function() {
 If this example runs by `gulp task1`, it runs tasks in order of task1 -> task1.1 -> task2 -> task2.1 -> task2.2 -> task1.2.
 Else if this example runs by `gulp task2`, it runs tasks in order of task2 -> task 2.1 -> task2.2.
 
-### Supports unordered running
+### Support unordered running
 
-Unless the `start` function of `gulp-run-seq` is called, any functions of this modules don't wait and only their callback functions are executed immediatedly. The callback functions are passed an argument which indicates if the waiting task ran in order by the `start` function.
+Unless the `start` function is called, any functions of `gulp-run-seq` module don't wait and only their callback functions are executed immediatedly. The callback functions are passed an argument which indicates if the task passed it was run in order by the `start` function.
 
 ## APIs
 
