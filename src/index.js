@@ -74,6 +74,8 @@ var grunseq = new function() {
     gulp.start.apply(info.runner, parallels);
   }
 
+  var _emptyFn = function() {};
+
   function Ender(runner, taskname) {
     var _endFn = function(cb) {
       var info = _findInfoByRunner(runner);
@@ -82,7 +84,7 @@ var grunseq = new function() {
 
       if (_isEmpty(info.running[taskname])) {
         delete info.running[taskname];
-        if (cb != null) { cb(); }
+        if (typeof(cb) === 'function') { cb(true); }
         if (_isEmpty(info.running)) { _next(info); }
       }
     };
@@ -91,7 +93,7 @@ var grunseq = new function() {
       if (info == null) { return; }
 
       var keys = Array.prototype.slice.call(arguments);
-      var waitcb = true; 
+      var waitcb = _emptyFn;
       if (keys.length > 0 && typeof(keys[keys.length - 1]) === 'function') {
         waitcb = keys.pop();
       }
@@ -107,23 +109,22 @@ var grunseq = new function() {
 
       if (!(taskname in info.running)) { return; }
 
-      var waitcb = null;
+      var waitcb = _emptyFn;
       if (key in info.running[taskname]) {
         waitcb = info.running[taskname][key];
         delete info.running[taskname][key];
       }
       if (_isEmpty(info.running[taskname])) { delete info.running[taskname]; }
       if (cb != null) { cb(true); }
-      if (typeof(waitcb) === 'function') { waitcb(true); }
-      if (_isEmpty(info.running)) { _next(info); }
+      if (_isEmpty(info.running)) { waitcb(true); _next(info); }
       return _endFn;
     };
     return _endFn;
   }
 
-  var _emptyFn = new function() {
+  var _nowaitFn = new function() {
     var _endFn = function(cb) {
-      if (cb != null) { cb(false); }
+      if (typeof(cb) === 'function') { cb(false); }
     };
     _endFn.wait = function() {
       var keys = Array.prototype.slice.call(arguments);
@@ -131,9 +132,11 @@ var grunseq = new function() {
         var fn = keys[keys.length - 1];
         fn(false);
       }
+      return _endFn;
     };
     _endFn.notify = function(key, cb) {
       if (cb != null) { cb(false); }
+      return _endFn;
     };
     return _endFn;
   };
@@ -141,7 +144,7 @@ var grunseq = new function() {
   function _ender(taskname) {
     var info = _findInfoByRunnedTask(taskname);
     if (info != null) { return new Ender(info.runner, taskname); }
-    return _emptyFn;
+    return _nowaitFn;
   }
 
 };
