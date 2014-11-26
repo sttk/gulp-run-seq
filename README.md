@@ -208,9 +208,8 @@ Copyright (C) 2014 Takayuki Sato.
 See the file LICENSE in this distribution for more details.
 
 
-[npm-image]: http://img.shields.io/badge/npm-v1.0.1-blue.svg
+[npm-image]: http://img.shields.io/badge/npm-v1.0.2-blue.svg
 [npm-url]: https://www.npmjs.org/package/gulp-run-seq
 [travis-image]: https://travis-ci.org/sttk/gulp-run-seq.svg?branch=master
 [travis-url]: https://travis-ci.org/sttk/gulp-run-seq
-
 

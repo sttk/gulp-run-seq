@@ -7,9 +7,4 @@ node_js:
 script:
   - gulp --gulpfile tests/test.js in_order
   - gulp --gulpfile tests/test.js no_order
-  - gulp --gulpfile tests/test1.js
-  - gulp --gulpfile tests/test2.js in_order
-  - gulp --gulpfile tests/test2.js no_order
-  - gulp --gulpfile tests/test3.js in_order
-  - gulp --gulpfile tests/test3.js no_order
 
