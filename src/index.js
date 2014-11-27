@@ -44,22 +44,25 @@ var grunseq = new function() {
     if (idx >= 0) { _runInfos.splice(idx, 1); }
   }
 
-  function _isEmpty(obj) {
+  function _isEmptyObject(obj) {
     return (Object.keys(obj).length === 0);
+  }
+
+  var _emptyFn = function() {};
+
+  function _popCallbackFromArgs(args) {
+    return (args.length === 0 || typeof(args[args.length -1]) !== 'function') ?
+      _emptyFn : args.pop();
   }
 
 
   function _start(/*...tasknames [, callback]*/) {
     var args = Array.prototype.slice.call(arguments);
-    var cb = null;
-    if (args.length > 0 && typeof(args[args.length - 1]) === 'function') {
-      cb = args.pop();
-    }
+    var cb = _popCallbackFromArgs(args);
 
     var runner = new Runner();
-    var tasknames = args;
-    var info = { 'runner': runner, 'tasks': tasknames, 'running': {},
-      'callback': cb };
+    var tasks = args;
+    var info = { 'runner':runner, 'tasks':tasks, 'running':{}, 'callback':cb };
     _runInfos.push(info);
     _next(info);
   }
@@ -88,50 +91,73 @@ var grunseq = new function() {
     _collectRunnedTasks(info);
   }
 
-  var _emptyFn = function() {};
+
+  function _execEnd(runner, taskname, cb) {
+    var info = _findInfoByRunner(runner);
+    if (info == null) { return; }
+    if (!(taskname in info.running)) { return; }
+
+    if (_isEmptyObject(info.running[taskname])) {
+      delete info.running[taskname];
+      if (typeof(cb) === 'function') { cb(true); }
+      if (_isEmptyObject(info.running)) { _next(info); }
+    }
+  }
+
+  function _waitToEnd(runner, taskname, keys) {
+    var info = _findInfoByRunner(runner);
+    if (info == null) { return; }
+
+    var waitCb = _popCallbackFromArgs(keys);
+
+    if (!(taskname in info.running)) { return; }
+    var running = info.running[taskname];
+
+    for (var i=0; i<keys.length; i++) { running[keys[i]] = waitCb; }
+  }
+
+  function _notifyEnd(runner, taskname, key, cb) {
+    var info = _findInfoByRunner(runner);
+    if (info == null) { return; }
+
+    if (!(taskname in info.running)) { return; }
+
+    var waitCb = _emptyFn;
+    if (key in info.running[taskname]) {
+      waitCb = info.running[taskname][key];
+      delete info.running[taskname][key];
+    }
+
+    if (_isEmptyObject(info.running[taskname])) {
+      delete info.running[taskname];
+    }
+
+    if (cb != null) { cb(true); }
+    if (_isEmptyObject(info.running)) { waitCb(true); _next(info); }
+  }
+
 
   function Ender(runner, taskname) {
     var _endFn = function(cb) {
-      var info = _findInfoByRunner(runner);
-      if (info == null) { return; }
-      if (!(taskname in info.running)) { return; }
-
-      if (_isEmpty(info.running[taskname])) {
-        delete info.running[taskname];
-        if (typeof(cb) === 'function') { cb(true); }
-        if (_isEmpty(info.running)) { _next(info); }
-      }
+      _execEnd(runner, taskname, cb);
+    };
+    _endFn.with = function(cb) {
+      return function() { _endFn(cb); };
     };
     _endFn.wait = function(/*...keys [, callback]*/) {
-      var info = _findInfoByRunner(runner);
-      if (info == null) { return; }
-
       var keys = Array.prototype.slice.call(arguments);
-      var waitcb = _emptyFn;
-      if (keys.length > 0 && typeof(keys[keys.length - 1]) === 'function') {
-        waitcb = keys.pop();
-      }
-      if (!(taskname in info.running)) { return; }
-
-      var obj = info.running[taskname];
-      for (var i=0; i<keys.length; i++) { obj[keys[i]] = waitcb; }
+      _waitToEnd(runner, taskname, keys);
       return _endFn;
     };
     _endFn.notify = function(key, cb) {
-      var info = _findInfoByRunner(runner);
-      if (info == null) { return; }
-
-      if (!(taskname in info.running)) { return; }
-
-      var waitcb = _emptyFn;
-      if (key in info.running[taskname]) {
-        waitcb = info.running[taskname][key];
-        delete info.running[taskname][key];
-      }
-      if (_isEmpty(info.running[taskname])) { delete info.running[taskname]; }
-      if (cb != null) { cb(true); }
-      if (_isEmpty(info.running)) { waitcb(true); _next(info); }
+      _notifyEnd(runner, taskname, key, cb);
       return _endFn;
+    };
+    _endFn.notifier = function(key, cb) {
+      return function() {
+        _notifyEnd(runner, taskname, key, cb);
+        return _endFn;
+      };
     };
     return _endFn;
   }
@@ -140,17 +166,22 @@ var grunseq = new function() {
     var _endFn = function(cb) {
       if (typeof(cb) === 'function') { cb(false); }
     };
+    _endFn.with = function(cb) {
+      return function() { _endFn(cb); };
+    };
     _endFn.wait = function() {
       var keys = Array.prototype.slice.call(arguments);
-      if (keys.length > 0 && typeof(keys[keys.length - 1]) === 'function') {
-        var fn = keys[keys.length - 1];
-        fn(false);
-      }
+      var cb = _popCallbackFromArgs(keys);
+      cb(false);
       return _endFn;
     };
-    _endFn.notify = function(key, cb) {
+    function _notify(key, cb) {
       if (cb != null) { cb(false); }
       return _endFn;
+    }
+    _endFn.notify = _notify;
+    _endFn.notifier = function(key, cb) {
+      return function() { return _notify(key, cb); };
     };
     return _endFn;
   };

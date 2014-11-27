@@ -64,9 +64,7 @@ gulp.task('task1', function() {
   var end = grunseq.ender('task1');
   gulp.src(...)
     .pipe(gulp.dest(...))
-    .on('end', function() {
-      end(function() { console.log('task1 end.'); });
-    });
+    .on('end', end.with(function() { console.log('task1 end.'); }));
 });
 ```
 
@@ -78,14 +76,10 @@ gulp.task('task1', function() {
   end.wait('key1', 'key2');
   gulp.src(...)
     .pipe(gulp.dest(...))
-    .on('end', function() {
-      end.notify('key1', function() { console.log('task1-1 end.'); });
-    });
+    .on('end', end.notifier('key1', function() { console.log('task1-1 end.'); }));
   gulp.src(...)
     .pipe(gulp.dest(...))
-    .on('end', function() {
-      end.notify('key2', function() { console.log('task1-2 end.'); });
-    });
+    .on('end', end.notifier('key2', function() { console.log('task1-2 end.'); }));
 });
 ```
 
@@ -116,35 +110,39 @@ gulp.task('task2.2', function() {
 });
 ```
 
-### Multiple sequences
+### Combine multiple sequences
 
 You can make multiple sequaneces. Write like a following example:
 
 ```js
 gulp.task('task1', function() {
-  grunseq.start('task1.1', 'task1.2');
+  var end = grunseq('task1');
+  grunseq.start('task1.1', 'task1.2', end);
 });
 
 gulp.task('task1.1', function() {
-  grunseq.ender('task1.1')();
+  var end = grunseq.ender('task1.1');
+  end();
 });
 
-gulp.task('task1.2', [ 'task2' ], function() {
-  grunseq.ender('task1.2').wait('w2');
+gulp.task('task1.2', function() {
+  var end = grunseq.ender('task1.2');
+  gulp.start('task2', end);
 });
 
 gulp.task('task2', function() {
-  grunseq.start('task2.1', 'task2.2', function() {
-    grunseq.ender('task1.2').notify('w2');  // Notifys to task 1.2
-  });
+  var end = grunseq.ender('task2');
+  grunseq.start('task2.1', 'task2.2', end);
 });
 
 gulp.task('task2.1', function() {
-  grunseq.ender('task2.1')();
+  var end = grunseq.ender('task2.1');
+  end();
 });
 
 gulp.task('task2.2', function() {
-  grunseq.ender('task2.2')();
+  var end = grunseq.ender('task2.2');
+  end();
 });
 
 ```
@@ -184,6 +182,11 @@ If a callback function is passed, it is called after the task end.
 
 - **callback** `{function}` [callback] - A callback function.
 
+### Ender#with([callback])
+
+This function returns a function which executes the `ender` function in it.
+This function enables to write for example as ``stream.on('end', end.with(cb))`` instead of ``stream.on('end', function(){ end(cb); })``.
+
 ### Ender#wait(keyword, ... [, callback])
 
 This function make a task wait until the Ender object receive notifications to release the waits for all keywords.
@@ -200,6 +203,12 @@ If a callback function is passed, it is called after the notification.
 - **keyword** `{...string}` keyword - Keywords.
 - **callback** `{function}` [callback] - A callback function.
 
+### Ender#notifier(keyword [, callback])
+
+This function returns a function which executes a `notify` function in it.
+This function enables to write for example as ``stream.on('end', end.notifier(key, cb))`` instead of ``stream.on('end', function(){ end.notify(key, cb); })``.
+
+
 ## License
 
 Copyright (C) 2014 Takayuki Sato.
@@ -208,7 +217,7 @@ Copyright (C) 2014 Takayuki Sato.
 See the file LICENSE in this distribution for more details.
 
 
-[npm-image]: http://img.shields.io/badge/npm-v1.0.2-blue.svg
+[npm-image]: http://img.shields.io/badge/npm-v1.1.0-blue.svg
 [npm-url]: https://www.npmjs.org/package/gulp-run-seq
 [travis-image]: https://travis-ci.org/sttk/gulp-run-seq.svg?branch=master
 [travis-url]: https://travis-ci.org/sttk/gulp-run-seq

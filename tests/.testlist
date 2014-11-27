@@ -1,0 +1,10 @@
+rm src/glob1 src/glob2 dst/*; rmdir dst
+gulp --gulpfile test.js in_order
+gulp --gulpfile test.js no_order
+gulp --gulpfile test1.js
+gulp --gulpfile test2.js in_order
+gulp --gulpfile test2.js no_order
+gulp --gulpfile test3.js in_order
+gulp --gulpfile test3.js no_order
+gulp --gulpfile test4.js
+gulp --gulpfile test5.js
