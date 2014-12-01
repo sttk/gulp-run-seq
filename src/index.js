@@ -3,14 +3,30 @@
 
 var gulp = require('gulp');
 
-var grunseq = new function() {
+var original_emitTaskDone = gulp._emitTaskDone;
+gulp._emitTaskDone = function() {};
 
+
+var grunseq = new function() {
   this.start = _start;
   this.ender = _ender;
 
-
   var _runInfos = [];
   var _runnedTasks = {};
+  var _startHrtimes = {};
+
+  var original_runTask = gulp._runTask;
+  gulp._runTask = function(task) {
+    _startHrtimes[task.name] = process.hrtime();
+    original_runTask.apply(gulp, arguments);
+  };
+
+  function _emitTaskDone(taskname, err) {
+    var task = gulp.tasks[taskname];
+    var st = _startHrtimes[taskname];
+    if (st) { task.hrDuration = process.hrtime(st); }
+    original_emitTaskDone.call(gulp, gulp.tasks[taskname], '', err);
+  }
 
   function Runner() {}
   Runner.prototype = gulp;
@@ -87,19 +103,20 @@ var grunseq = new function() {
     if (parallels.length === 0) { _next(info); return; }
 
     _collectRunnedTasks(info);
-    gulp.start.apply(info.runner, parallels);
+    gulp.start.call(info.runner, parallels);
     _collectRunnedTasks(info);
   }
 
 
-  function _execEnd(runner, taskname, cb) {
+  function _execEnd(runner, taskname, cb, err) {
     var info = _findInfoByRunner(runner);
     if (info == null) { return; }
     if (!(taskname in info.running)) { return; }
 
     if (_isEmptyObject(info.running[taskname])) {
       delete info.running[taskname];
-      if (typeof(cb) === 'function') { cb(true); }
+      if (typeof(cb) === 'function') { cb(true, err); }
+      _emitTaskDone(taskname, err);
       if (_isEmptyObject(info.running)) { _next(info); }
     }
   }
@@ -116,7 +133,7 @@ var grunseq = new function() {
     for (var i=0; i<keys.length; i++) { running[keys[i]] = waitCb; }
   }
 
-  function _notifyEnd(runner, taskname, key, cb) {
+  function _notifyEnd(runner, taskname, key, cb, lastErr, err) {
     var info = _findInfoByRunner(runner);
     if (info == null) { return; }
 
@@ -128,60 +145,69 @@ var grunseq = new function() {
       delete info.running[taskname][key];
     }
 
+    if (cb != null) { cb(true, err); }
+
     if (_isEmptyObject(info.running[taskname])) {
       delete info.running[taskname];
+      waitCb(true, lastErr);
+      _emitTaskDone(taskname, lastErr);
     }
 
-    if (cb != null) { cb(true); }
-    if (_isEmptyObject(info.running)) { waitCb(true); _next(info); }
+    if (_isEmptyObject(info.running)) { _next(info); }
   }
 
 
   function Ender(runner, taskname) {
-    var _endFn = function(cb) {
-      _execEnd(runner, taskname, cb);
+    var _lastErr = null;
+    var _endFn = function(cb, err) {
+      _execEnd(runner, taskname, cb, err);
     };
     _endFn.with = function(cb) {
-      return function() { _endFn(cb); };
+      return function(err) { _endFn(cb, err); };
     };
     _endFn.wait = function(/*...keys [, callback]*/) {
       var keys = Array.prototype.slice.call(arguments);
       _waitToEnd(runner, taskname, keys);
       return _endFn;
     };
-    _endFn.notify = function(key, cb) {
-      _notifyEnd(runner, taskname, key, cb);
-      return _endFn;
-    };
-    _endFn.notifier = function(key, cb) {
-      return function() {
-        _notifyEnd(runner, taskname, key, cb);
-        return _endFn;
-      };
-    };
-    return _endFn;
-  }
-
-  var _nowaitFn = new function() {
-    var _endFn = function(cb) {
-      if (typeof(cb) === 'function') { cb(false); }
-    };
-    _endFn.with = function(cb) {
-      return function() { _endFn(cb); };
-    };
-    _endFn.wait = function() {
-      var keys = Array.prototype.slice.call(arguments);
-      var cb = _popCallbackFromArgs(keys);
-      cb(false);
-      return _endFn;
-    };
-    function _notify(key, cb) {
-      if (cb != null) { cb(false); }
+    function _notify(key, cb, err) {
+      if (err) { _lastErr = err; }
+      _notifyEnd(runner, taskname, key, cb, _lastErr, err);
       return _endFn;
     }
     _endFn.notify = _notify;
     _endFn.notifier = function(key, cb) {
-      return function() { return _notify(key, cb); };
+      return function(err) { return _notify(key, cb, err); };
+    };
+    return _endFn;
+  }
+
+  var NoWaitEnder = function(name) {
+    var _waiting = {};
+    var _lastErr = null;
+    var _endFn = function(cb, err) {
+      if (typeof(cb) === 'function') { cb(false, err); }
+      _emitTaskDone(name, err);
+    };
+    _endFn.with = function(cb) {
+      return function(err) { _endFn(cb, err); };
+    };
+    _endFn.wait = function() {
+      var keys = Array.prototype.slice.call(arguments);
+      for (var i=0; i<keys.length; i++) { _waiting[keys] = true; }
+      var cb = _popCallbackFromArgs(keys);
+      cb(false);
+      return _endFn;
+    };
+    function _notify(key, cb, err) {
+      delete _waiting[key];
+      if (cb != null) { cb(false, err); }
+      if (Object.keys(_waiting).length === 0) { _emitTaskDone(name, err); }
+      return _endFn;
+    }
+    _endFn.notify = _notify;
+    _endFn.notifier = function(key, cb) {
+      return function(err) { return _notify(key, cb, err); };
     };
     return _endFn;
   };
@@ -189,9 +215,44 @@ var grunseq = new function() {
   function _ender(taskname) {
     var info = _findInfoByRunningTask(taskname);
     if (info != null) { return new Ender(info.runner, taskname); }
-    return _nowaitFn;
+    return new NoWaitEnder(taskname);
   }
 
+};
+
+var originalTaskFn = gulp.task;
+gulp.task = function(name, dep, fn) {
+  if (Array.isArray(dep) && dep.length === 1 && Array.isArray(dep[0])) {
+    var taskseq = dep[0], seqfn;
+    if (!fn) {
+      seqfn = function(cb) {
+        grunseq.start.call(grunseq, taskseq, cb);
+      };
+    } else if (fn.length > 0) {
+      seqfn = function(cb) {
+        var end = grunseq.ender(name);
+        taskseq.push(function() { fn(end); });
+        grunseq.start.call(grunseq, taskseq, cb);
+      };
+    } else {
+      seqfn = function(cb) {
+        taskseq.push(fn);
+        grunseq.start.call(grunseq, taskseq, cb);
+      };
+    }
+    return originalTaskFn.call(gulp, name, seqfn);
+  } else {
+    if (!fn && typeof(dep) === 'function') {
+      fn = dep;
+      dep = undefined;
+    }
+    if (fn && fn.length > 0) {
+      var endfn = function(cb) { fn(grunseq.ender(name)); cb(); };
+      return originalTaskFn.call(gulp, name, dep, endfn);
+    } else {
+      return originalTaskFn.apply(gulp, arguments);
+    }
+  }
 };
 
 module.exports = grunseq;
