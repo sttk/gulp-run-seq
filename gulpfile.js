@@ -30,6 +30,6 @@ gulp.task('uglify', function() {
   gulp.src('src/index.js')
     .pipe(uglify())
     .pipe(gulp.dest('.'));
+});
 
 gulp.task('default', [ 'make' ]);
-});
