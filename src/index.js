@@ -225,35 +225,42 @@ gulp.task = function(name, dep, fn) {
   if (Array.isArray(dep) && dep.length === 1 && Array.isArray(dep[0])) {
     var taskseq = dep[0], seqfn;
     if (!fn) {
-      seqfn = function(cb) {
-        grunseq.start.call(grunseq, taskseq, cb);
+      seqfn = function() {
+        grunseq.start.apply(grunseq, taskseq);
       };
     } else if (fn.length > 0) {
       seqfn = function(cb) {
         var end = grunseq.ender(name);
-        taskseq.push(function() { fn(end); });
-        grunseq.start.call(grunseq, taskseq, cb);
+        taskseq.push(function(cb) { fn(end); if(cb){cb();} });
+        grunseq.start.apply(grunseq, taskseq);
       };
     } else {
-      seqfn = function(cb) {
-        taskseq.push(fn);
-        grunseq.start.call(grunseq, taskseq, cb);
+      seqfn = function() {
+        var end = grunseq.ender(name);
+        taskseq.push(function() { fn(); end(); });
+        grunseq.start.apply(grunseq, taskseq);
       };
     }
-    return originalTaskFn.call(gulp, name, seqfn);
+    return originalTaskFn.call(gulp, name, undefined, seqfn);
   } else {
     if (!fn && typeof(dep) === 'function') {
       fn = dep;
       dep = undefined;
     }
-    var end = grunseq.ender(name);
+    var endFn;
     if (fn && fn.length > 0) {
-      return originalTaskFn.call(gulp, name, dep,
-        function(cb) { fn(end); cb(); });
+      endFn = function(cb) {
+        var end = grunseq.ender(name);
+        fn(end); if(cb){cb();}
+      };
+      return originalTaskFn.call(gulp, name, dep, endFn);
     } else {
-      return originalTaskFn.call(gulp, name, dep,
-        function(cb) { fn(); end(); });
+      endFn = function() {
+        var end = grunseq.ender(name);
+        fn(); end();
+      };
     }
+    return originalTaskFn.call(gulp, name, dep, endFn);
   }
 };
 
