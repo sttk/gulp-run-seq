@@ -246,11 +246,13 @@ gulp.task = function(name, dep, fn) {
       fn = dep;
       dep = undefined;
     }
+    var end = grunseq.ender(name);
     if (fn && fn.length > 0) {
-      var endfn = function(cb) { fn(grunseq.ender(name)); cb(); };
-      return originalTaskFn.call(gulp, name, dep, endfn);
+      return originalTaskFn.call(gulp, name, dep,
+        function(cb) { fn(end); cb(); });
     } else {
-      return originalTaskFn.apply(gulp, arguments);
+      return originalTaskFn.call(gulp, name, dep,
+        function(cb) { fn(); end(); });
     }
   }
 };
