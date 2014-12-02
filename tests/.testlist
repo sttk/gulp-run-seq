@@ -1,10 +1,32 @@
 rm src/glob1 src/glob2 dst/*; rmdir dst
-gulp --gulpfile test.js in_order
-gulp --gulpfile test.js no_order
-gulp --gulpfile test1.js
-gulp --gulpfile test2.js in_order
-gulp --gulpfile test2.js no_order
-gulp --gulpfile test3.js in_order
-gulp --gulpfile test3.js no_order
-gulp --gulpfile test4.js
-gulp --gulpfile test5.js
+gulp --gulpfile tests/test.js
+gulp --gulpfile tests/test.js no_order
+
+gulp --gulpfile tests/test.old.js
+gulp --gulpfile tests/test.old.js no_order
+
+gulp --gulpfile tests/test_async.js
+gulp --gulpfile tests/test_async.old.js
+gulp --gulpfile tests/test_async.org.js
+
+gulp --gulpfile tests/test_async_cb.js
+gulp --gulpfile tests/test_async_cb.old.js
+gulp --gulpfile tests/test_async_cb.org.js
+
+gulp --gulpfile tests/test_sync.js
+gulp --gulpfile tests/test_sync.old.js
+
+gulp --gulpfile tests/test_sync_cb.js
+gulp --gulpfile tests/test_sync_cb.old.js
+
+gulp --gulpfile tests/test_sync_nosleep.js
+gulp --gulpfile tests/test_sync_nosleep.old.js
+
+gulp --gulpfile tests/test_seq.js
+gulp --gulpfile tests/test_seq.old.js
+
+gulp --gulpfile tests/test_run_task_once.js
+gulp --gulpfile tests/test_run_task_once.old.js
+
+gulp --gulpfile tests/test_wait.js
+gulp --gulpfile tests/test_wait.old.js

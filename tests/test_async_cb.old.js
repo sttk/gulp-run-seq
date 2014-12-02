@@ -2,7 +2,6 @@
 
 var gulp = require('gulp');
 var grunseq = require('../index.js');
-//var grunseq = require('../src/index.js');
 
 
 gulp.task('task0', function(cb) {

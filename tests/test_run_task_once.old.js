@@ -1,7 +1,6 @@
 'use strict';
 
 var gulp = require('gulp');
-//var grunseq = require('../src/index.js');
 var grunseq = require('../index.js');
 
 gulp.task('task0', function() {
@@ -25,18 +24,14 @@ gulp.task('task2', function() {
   });
 });
 
-gulp.task('task3', function() {
+gulp.task('task3', function(a) {
   var end = grunseq.ender('task3');
-  setTimeout(function() {
-    end(function(){ console.log('task3 end'); });
-  }, 100);
+  setTimeout(end.with(function(){ console.log('task3 end'); }), 100);
 });
 
-gulp.task('task4', function() {
+gulp.task('task4', function(a) {
   var end = grunseq.ender('task4');
-  setTimeout(function() {
-    end(function(){ console.log('task4 end'); });
-  }, 2000);
+  setTimeout(end.with(function(){ console.log('task4 end'); }), 2000);
 });
 
 

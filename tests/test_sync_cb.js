@@ -11,8 +11,8 @@ gulp.task('task1', function(end) {
   setTimeout(end.with(function() { console.log('task1 end.'); }), 1000);
 });
 
-gulp.task('task2', [ 'task2.1', 'task2.2' ], function(end) {
-  setTimeout(end.with(function() { console.log('task2 end.'); }), 1000);
+gulp.task('task2', [[ ['task2.1', 'task2.2'] ]], function(end) {
+  setTimeout(end.with(function(end) { console.log('task2 end.'); }), 1000);
 });
 
 gulp.task('task2.1', function(end) {
@@ -23,7 +23,7 @@ gulp.task('task2.2', function(end) {
   setTimeout(end.with(function() { console.log('task2.2 end.'); }), 3000);
 });
 
-gulp.task('task3', [ 'task3.1', 'task3.2', 'task3.3' ], function(end) {
+gulp.task('task3', [[ ['task3.1', 'task3.2', 'task3.3'] ]], function(end) {
   setTimeout(end.with(function() { console.log('task3 end.'); }), 1000);
 });
 
@@ -36,11 +36,12 @@ gulp.task('task3.2', function(end) {
 });
 
 gulp.task('task3.3', function(end) {
-  end(function() { console.log('task3.3 end.'); });
+  console.log('task3.3 end.');
+  end();
 });
 
 gulp.task('task4', function(end) {
   setTimeout(end.with(function() { console.log('task4 end.'); }), 1000);
 });
 
-gulp.task('default', [ 'task0', 'task1', 'task2', 'task3', 'task4' ]);
+gulp.task('default', [[ 'task0', 'task1', 'task2', 'task3', 'task4' ]]);
