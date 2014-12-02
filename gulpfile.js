@@ -1,35 +1,39 @@
 'use strict';
 
 var gulp = require('gulp');
+var ghelp = require('gulp-showhelp');
 var uglify = require('gulp-uglify');
 var jshint = require('gulp-jshint');
-var ghelp = require('gulp-showhelp');
+var stylish = require('jshint-stylish');
+var concat = require('gulp-concat');
+
+
+var srcs = [
+  'src/main.js',
+  'src/util.js',
+  'src/endtasks.js',
+  'src/taskmgr.js',
+  'src/ender.js',
+  'src/taskext.js',
+];
+
 
 gulp.task('help', function() {
-  var task = ghelp.get_argv('task', 't');
-  if (task != null) {
-    ghelp.show(task);
-  } else {
-    ghelp.show();
-  }
-}).help = {
-  '': 'shows this help message.',
-  '[ --task=t ]': 'specifys a task shown. Alias: -t.'
-};
-
-gulp.task('make', [ 'lint', 'uglify' ])
-  .help = 'makes index.js file.';
+  ghelp.show();
+}).help = 'shows this help message.';
 
 gulp.task('lint', function() {
-  gulp.src('src/**/*.js')
+  gulp.src(srcs)
+    .pipe(concat('index.js'))
+    .pipe(gulp.dest('.'))
     .pipe(jshint())
-    .pipe(jshint.reporter('default'));
-});
+    .pipe(jshint.reporter(stylish));
+}).help = "generates the none-minifized 'index.js' and lints it. ";
 
 gulp.task('uglify', function() {
-  gulp.src('src/index.js')
+  gulp.src(srcs)
     .pipe(uglify())
+    .pipe(concat('index.js', {newLine:''}))
     .pipe(gulp.dest('.'));
-});
+}).help = "minifizes source files and concatinates them into the 'index.js'.";
 
-gulp.task('default', [ 'make' ]);
