@@ -2,8 +2,6 @@ var EndTaskManager = new function() {
   this.endTask = _endTask;
   this.isRunnedTask = _isRunnedTask;
 
-  var gulp = require('gulp');
-
   var _runnedTasks = {};
   var _runningTasks = {};
   var _startHrtimes = {};
@@ -26,8 +24,8 @@ var EndTaskManager = new function() {
     original_emitTaskDone.call(gulp, gulp.tasks[taskname], '', err);
   }
 
-  function _endTask(taskname, cb, err, isSync) {
-    if (typeof(cb) === 'function') { cb(isSync, err); }
+  function _endTask(taskname, callback, err, isSync) {
+    fnCall(callback, isSync, err);
     if (taskname in _runningTasks) {
       delete _runningTasks[taskname];
       _emitTaskDone(taskname, err);
@@ -37,4 +35,5 @@ var EndTaskManager = new function() {
   function _isRunnedTask(taskname) {
     return (taskname in _runnedTasks);
   }
+
 };
