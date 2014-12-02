@@ -4,7 +4,7 @@ var gulp = require('gulp');
 require('../index.js');
 
 gulp.task('task0', [[ 'task1', ['task2', 'task3'],'task4' ]], function(end) {
-  end.with(function() { console.log('task0'); });
+  end(function() { console.log('task0'); });
 });
 
 gulp.task('task1', function(end) {

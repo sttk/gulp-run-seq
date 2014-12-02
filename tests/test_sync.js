@@ -43,5 +43,4 @@ gulp.task('task4', function() {
   setTimeout(function() { console.log('task4 end.'); }, 1000);
 });
 
-gulp.task('default', [[ 'task0', 'task1', 'task2', 'task3', 'task4' ]],
-function(){});
+gulp.task('default', [[ 'task0', 'task1', 'task2', 'task3', 'task4' ]]);
