@@ -116,7 +116,7 @@ You can make multiple sequaneces. Write like a following example:
 
 ```js
 gulp.task('task1', function() {
-  var end = grunseq('task1');
+  var end = grunseq.ender('task1');
   grunseq.start('task1.1', 'task1.2', end);
 });
 
@@ -217,7 +217,7 @@ Copyright (C) 2014 Takayuki Sato.
 See the file LICENSE in this distribution for more details.
 
 
-[npm-image]: http://img.shields.io/badge/npm-v1.0.3-blue.svg
+[npm-image]: http://img.shields.io/badge/npm-v1.1.0-blue.svg
 [npm-url]: https://www.npmjs.org/package/gulp-run-seq
 [travis-image]: https://travis-ci.org/sttk/gulp-run-seq.svg?branch=master
 [travis-url]: https://travis-ci.org/sttk/gulp-run-seq
