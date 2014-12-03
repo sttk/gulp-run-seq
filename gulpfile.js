@@ -11,7 +11,7 @@ var concat = require('gulp-concat');
 var srcs = [
   'src/main.js',
   'src/util.js',
-  'src/endtasks.js',
+  'src/taskstt.js',
   'src/taskmgr.js',
   'src/ender.js',
   'src/taskext.js',
