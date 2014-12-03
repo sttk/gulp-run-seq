@@ -64,37 +64,31 @@ gulp.task('task3', function(cb) {
 
 gulp.task('task4', [ 'task4.1', 'task4.2' ], function(cb) {
   var end = grunseq.ender('task4');
-  end.wait('w4.1', 'w4.2', function(seq) {
-    console.log('===> task4: run in order? ' + seq);
-    console.log('===> task4: data/glob1 exists? ',fs.existsSync('data/glob1'));
-    console.log('===> task4: data/glob2 exists? ',fs.existsSync('data/glob2'));
-    console.log('===> task4: dest/glob0 exists? ',fs.existsSync('dest/glob0'));
-    console.log('===> task4: dest/glob1 exists? ',fs.existsSync('dest/glob1'));
-    console.log('===> task4: dest/glob2 exists? ',fs.existsSync('dest/glob2'));
-    console.log('===> task4 end.');
-    cb();
-  });
+
+  console.log('===> task4: data/glob1 exists? ',fs.existsSync('data/glob1'));
+  console.log('===> task4: data/glob2 exists? ',fs.existsSync('data/glob2'));
+  console.log('===> task4: dest/glob0 exists? ',fs.existsSync('dest/glob0'));
+  console.log('===> task4: dest/glob1 exists? ',fs.existsSync('dest/glob1'));
+  console.log('===> task4: dest/glob2 exists? ',fs.existsSync('dest/glob2'));
+  cb();
+  end(function() {console.log('===> task4 end.');});
 });
 
 gulp.task('task4.1', function(cb) {
-  var end = grunseq.ender('task4');
-  setTimeout(function() {
-    end.notify('w4.1', function(seq) {
-      console.log('===> task4.1(w4.1) run in order? ' + seq);
-      if (seq) { console.log('===> task4.1 end.'); }
-      cb();
-    });
-  }, 2000);
+  var end = grunseq.ender('task4.1');
+  setTimeout(end.with(function(seq) {
+    console.log('===> task4.1(w4.1) run in order? ' + seq);
+    if (seq) { console.log('===> task4.1 end.'); }
+    cb();
+  }), 2000);
 });
 
-gulp.task('task4.2', function(a) {
-  var end = grunseq.ender('task4');
-  setTimeout(function() {
-    end.notify('w4.2', function(seq) {
-      console.log('===> task4.2(w4.2) run in order? ' + seq);
-      if (seq) { console.log('===> task4.2 end.'); }
-    });
-  }, 1000);
+gulp.task('task4.2', function(c) {
+  var end = grunseq.ender('task4.2');
+  setTimeout(end.with(function(seq) {
+    console.log('===> task4.2(w4.2) run in order? ' + seq);
+    if (seq) { console.log('===> task4.2 end.'); }
+  }), 1000);
 });
 
 gulp.task('task5', function(cb) {
@@ -127,7 +121,7 @@ gulp.task('task5', function(cb) {
   });
 });
 
-gulp.task('task6', function(end) {
+gulp.task('task6', function() {
   console.log('===> task6: data/glob1 exists? ', fs.existsSync('data/glob1'));
   console.log('===> task6: data/glob2 exists? ', fs.existsSync('data/glob2'));
   console.log('===> task6: dest/glob0 exists? ', fs.existsSync('dest/glob0'));
@@ -140,7 +134,7 @@ gulp.task('task6', function(end) {
 gulp.task('no_order', [ 'task0', 'task1', 'task2.1', 'task2.2', 'task2.3',
   'task3', 'task4', 'task5', 'task6']);
 
-gulp.task('default', function() {
+gulp.task('default', function(c) {
   grunseq.start('task0', 'task1', ['task2.1', 'task2.2', 'task2.3'], 'task3',
     'task4', 'task5', 'task6');
 });

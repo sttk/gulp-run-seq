@@ -69,7 +69,7 @@ gulp.task('task4', function(cb) {
   setTimeout(end.with(function(){ console.log('task4 end.'); cb();}), 1000);
 });
 
-gulp.task('default', function(cb) {
-  if (!cb) { cb = _emptyFn; }
-  grunseq.start('task0', 'task1', 'task2', 'task3', 'task4', cb);
+gulp.task('default', function() {
+  var end = grunseq.ender('default');
+  grunseq.start('task0', 'task1', 'task2', 'task3', 'task4');
 });

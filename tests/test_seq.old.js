@@ -58,6 +58,6 @@ gulp.task('task4', function(c) {
   setTimeout(end.with(function(){ console.log('task4 end.'); }), 1000);
 });
 
-gulp.task('default', function(c) {
+gulp.task('default', function() {
   grunseq.start('task0', 'task1', 'task2', 'task3', 'task4');
 });
