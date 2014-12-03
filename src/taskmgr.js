@@ -56,7 +56,7 @@ var TaskManager = new function() {
     for (var i=0; i<tasks.length; i++) {
       var taskname = tasks[i];
       if (typeof(taskname) !== 'string') { continue; }
-      if (EndTaskManager.isRunnedTask(taskname)) { continue; }
+      if (TaskStatus.isRunnedTask(taskname)) { continue; }
       tasklist.push(taskname);
       info.running[taskname] = {};
     }
@@ -67,13 +67,13 @@ var TaskManager = new function() {
 
   function _removeTask(info, taskname, cb, err) {
     if (info == null || !('running' in info) || !(taskname in info.running)) {
-      EndTaskManager.endTask(taskname, cb, err, true);
+      TaskStatus.endTask(taskname, cb, err, true);
       return false;
     }
 
     if (isEmptyObject(info.running[taskname])) {
       delete info.running[taskname];
-      EndTaskManager.endTask(taskname, cb, err, true);
+      TaskStatus.endTask(taskname, cb, err, true);
       return true;
     }
 
@@ -98,7 +98,7 @@ var TaskManager = new function() {
 
       if (isEmptyObject(info.running[taskname])) {
         delete info.running[taskname];
-        EndTaskManager.endTask(taskname, waitCb, lastErr, true);
+        TaskStatus.endTask(taskname, waitCb, lastErr, true);
       }
       
       return true;

@@ -26,7 +26,7 @@ function Ender(info, taskname) {
 
 function NoWaitEnder(taskname) {
   var _ender = function(callback, err) {
-    EndTaskManager.endTask(taskname, callback, err, false);
+    TaskStatus.endTask(taskname, callback, err, false);
   };
   _ender.with = function(cb) {
     return function(err) { _ender(cb, err); };
