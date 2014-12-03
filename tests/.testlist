@@ -1,4 +1,4 @@
-rm src/glob1 src/glob2 dst/*; rmdir dst
+rm data/glob1 data/glob2 dest/*; rmdir dest
 gulp --gulpfile tests/test.js
 gulp --gulpfile tests/test.js no_order
 

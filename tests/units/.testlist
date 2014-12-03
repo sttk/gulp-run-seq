@@ -1,6 +1,6 @@
-gulp --gulpfile tests/units/EndTaskManagerTest.js task0
-gulp --gulpfile tests/units/EndTaskManagerTest.js task1
-gulp --gulpfile tests/units/EndTaskManagerTest.js task2
-gulp --gulpfile tests/units/EndTaskManagerTest.js task3
+gulp --gulpfile tests/units/TaskStatusTest.js task0
+gulp --gulpfile tests/units/TaskStatusTest.js task1
+gulp --gulpfile tests/units/TaskStatusTest.js task2
+gulp --gulpfile tests/units/TaskStatusTest.js task3
 node tests/units/UtilTest.js
 node tests/units/TaskManagerTest.js

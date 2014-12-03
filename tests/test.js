@@ -66,21 +66,17 @@ gulp.task('task4', [[ 'task4.1', 'task4.2' ]], function(end) {
 });
 
 gulp.task('task4.1', function(end) {
-  setTimeout(function() {
-    end.notify('w4.1', function(seq) {
-      console.log('===> task4.1(w4.1) run in order? ' + seq);
-      if (seq) { console.log('===> task4.1 end.'); }
-    });
-  }, 2000);
+  setTimeout(end.with(function(seq) {
+    console.log('===> task4.1 run in order? ' + seq);
+    if (seq) { console.log('===> task4.1 end.'); }
+  }), 2000);
 });
 
 gulp.task('task4.2', function(end) {
-  setTimeout(function() {
-    end.notify('w4.2', function(seq) {
-      console.log('===> task4.2(w4.2) run in order? ' + seq);
-      if (seq) { console.log('===> task4.2 end.'); }
-    });
-  }, 1000);
+  setTimeout(end.with(function(seq) {
+    console.log('===> task4.2 run in order? ' + seq);
+    if (seq) { console.log('===> task4.2 end.'); }
+  }), 1000);
 });
 
 gulp.task('task5', function(end) {

@@ -4,6 +4,7 @@ var gulp = require('gulp');
 require('../index.js');
 
 gulp.task('task0', function(end) {
+//gulp.__start({task:'task0'});
   setTimeout(end.with(function() { console.log('task0 end.'); }), 2000);
 });
 
