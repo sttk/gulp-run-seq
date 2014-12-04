@@ -2,6 +2,8 @@
 
 Gulp plugin to run tasks in order.
 
+> Deprecated the direct operations with the object returned by `require('gulp-req-seq'))`, for example, `grunseq.start(...)` or `var ender = grunseq.ender(...)`, etc.
+
 ## Install
 
 Install `gulp-run-seq` with npm:
@@ -159,6 +161,8 @@ If a callback function is passed, it is called after the notification.
 This function returns a function object which executes a `notify` function in it.
 This function enables to write for example as ``stream.on('end', end.notifier(key, cb))`` instead of ``stream.on('end', function(){ end.notify(key, cb); })``.
 
+- **keyword** `{...string}` keyword - Keywords.
+- **callback** `{function}` [callback] - A callback function.
 
 ## License
 
@@ -168,7 +172,7 @@ Copyright (C) 2014 Takayuki Sato.
 See the file LICENSE in this distribution for more details.
 
 
-[npm-image]: http://img.shields.io/badge/npm-v1.1.0-blue.svg
+[npm-image]: http://img.shields.io/badge/npm-v1.2.0-blue.svg
 [npm-url]: https://www.npmjs.org/package/gulp-run-seq
 [travis-image]: https://travis-ci.org/sttk/gulp-run-seq.svg?branch=master
 [travis-url]: https://travis-ci.org/sttk/gulp-run-seq
