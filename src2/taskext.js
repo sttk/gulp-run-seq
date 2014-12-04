@@ -19,16 +19,18 @@ gulp.task = function(name, dep, fn) {
   function _newName(name) {
     var n1 = 33 + Math.floor((126-32) * Math.random());
     var n2 = 33 + Math.floor((126-32) * Math.random());
-    var c1 = String.fromCharCode(n1);
-    var c2 = String.fromCharCode(n2);
-    return name + '\u001B[8m' + c1 + c2 +'\u001B[0m\u001B[2D';
+    var suffix = String.fromCharCode(n1) + String.fromCharCode(n2);
+    suffix = '\u001B[8m' + suffix +'\u001B[0m\u001B[2D'; //hidden
+    return name + suffix;
   }
 
   function _defineSeqStartTask(name, dep) {
     _seqStartTasks[name] = true;
     var newName = _newName(name);
     var newDep = dep.concat(newName);
-    var fn = function(cb) { SeqEngine.startTasks(newDep, cb); };
+    var fn = function(cb) {
+      SeqEngine.startTasks(newDep, new Ender(name, cb));
+    };
     originalTask.call(gulp, name, undefined, fn);
     return newName;
   }
@@ -41,14 +43,11 @@ gulp.task = function(name, dep, fn) {
   function _createTask(name, dep, fn) {
     var newFn;
     if (!fn) {
-      newFn = function() { (new Ender(name))(); };
+      newFn = function(cb) { (new Ender(name, cb))(); };
     } else if (fn.length === 0) {
-      newFn = function() { var end = new Ender(name); fn(); end(); };
+      newFn = function(cb) { var end = new Ender(name); fn(); end(cb); };
     } else {
-      newFn = function(cb) {
-        var end = new Ender(name);
-        fn(function() { _runCb(cb); end(); });
-      };
+      newFn = function(cb) { var end = new Ender(name, cb); fn(end); };
     }
     return originalTask.call(gulp, name, dep, newFn);
   }

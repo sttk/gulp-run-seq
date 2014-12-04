@@ -1,4 +1,4 @@
-function Ender(taskname) {
+function Ender(taskname, taskCb) {
   function _popCallback(keys) {
     return (typeof(keys[keys.length -1]) === 'function') ? keys.pop() : null;
   }
@@ -6,7 +6,13 @@ function Ender(taskname) {
   var _ender, _wait, _ntf;
   var info = SeqEngine.getInfoByRunningTask(taskname);
   if (info != null) {
-    _ender = function(cb) { SeqEngine.endTask(info, taskname, cb); };
+    _ender = function(cb) {
+      var f = function() {
+        if (typeof(cb) === 'function') { cb(); }
+        if (typeof(taskCb) === 'function') { taskCb(); }
+      };
+      SeqEngine.endTask(info, taskname, f);
+    };
     _wait = function(/*...keys [, cb]*/) {
       var keys = Array.prototype.slice.call(arguments);
       var cb = _popCallback(keys);
@@ -18,7 +24,10 @@ function Ender(taskname) {
       return _ender;
     };
   } else {
-    _ender = function(cb) { if (typeof(cb) === 'function') { cb(); } };
+    _ender = function(cb) {
+      if (typeof(cb) === 'function') { cb(); }
+      if (typeof(taskCb) === 'function') { taskCb(); }
+    };
     _wait = function() {
       var keys = Array.prototype.slice.call(arguments);
       var cb = _popCallback(keys);
