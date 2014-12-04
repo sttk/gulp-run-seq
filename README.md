@@ -48,7 +48,7 @@ gulp.task('task4', function() {
 ```
 
 This example executes tasks in order of task1 -> task2/task3 -> task4, by default task.
-To write tasks between ``[[`` and ``]]`` at the position of dependency tasks, these tasks are executed in order synchronously. Adding more tasks between `[` and `]` into there, these added tasks are executed in no order but keeped the order before and after. 
+Writing tasks between ``[[`` and ``]]`` at the position of dependency tasks, these tasks are executed in order synchronously. Adding more tasks between `[` and `]` into there, these added tasks are executed in no order but keeped the order before and after. 
 
 ### Wait asynchronous tasks
 

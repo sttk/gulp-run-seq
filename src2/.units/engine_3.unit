@@ -3,7 +3,7 @@
 'use strict';
 
 var load = require('load');
-var SeqEngine = load('./engine.js').SeqEngine;
+var SeqEngine = load('../engine.js').SeqEngine;
 
 var logno = 0, info, cb0, cb1, cb2;
 function doLog() {

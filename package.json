@@ -30,6 +30,7 @@
     "jshint-stylish": "^1.0.0",
     "gulp-concat": "^2.4.2",
     "del": "^1.0.0",
-    "gulp-rename": "^1.2.0"
+    "gulp-rename": "^1.2.0",
+    "load": "^1.0.1"
   }
 }

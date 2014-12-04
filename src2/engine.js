@@ -20,6 +20,7 @@ var SeqEngine = new function() {
   function _log() {
     console.log('SeqEngine = [');
     _runInfos.forEach(function(info) { console.log(info); });
+    console.log('  runned: ' + JSON.stringify(_runned));
     console.log('].');
   }
 
@@ -89,6 +90,7 @@ var SeqEngine = new function() {
       taskset.push(taskname);
       info.running[taskname] = {};
     }
+    if (taskset.length === 0) { _nextTasks(info); return; }
     gulp.start.call(info.runner, taskset);
   }
 
