@@ -57,7 +57,7 @@ var SeqEngine = new function() {
     if (!(taskname in info.running)) { return false; }
     if (Object.keys(info.running[taskname]).length > 0) { return false; }
     delete info.running[taskname];
-    if (typeof(cb) === 'function') { cb(true); }
+    if (typeof(cb) === 'function') { cb(); }
     return true;
   }
 
@@ -67,7 +67,7 @@ var SeqEngine = new function() {
   }
 
   function _removeWaitKey(info, taskname, key, cb) {
-    if (typeof(cb) === 'function') { cb(true); }
+    if (typeof(cb) === 'function') { cb(); }
     if (key in info.running[taskname]) {
       var taskCb = info.running[taskname][key];
       delete info.running[taskname][key];
