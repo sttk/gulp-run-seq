@@ -14,3 +14,4 @@ gulp --gulpfile tests/test_sync_nosleep.js
 gulp --gulpfile tests/test_seq.js
 gulp --gulpfile tests/test_run_task_once.js
 gulp --gulpfile tests/test_wait.js
+gulp --gulpfile tests/test_wait.js task00

@@ -67,11 +67,12 @@ var SeqEngine = new function() {
     for (var i=0; i<keys.length; i++) { running[keys[i]] = cb; }
   }
 
-  function _removeWaitKey(info, taskname, key, cb) {
+  function _removeWaitKey(info, taskname, key, cb, taskCb) {
     if (typeof(cb) === 'function') { cb(); }
     if (key in info.running[taskname]) {
-      var taskCb = info.running[taskname][key];
+      var waitCb = info.running[taskname][key];
       delete info.running[taskname][key];
+      if (typeof(waitCb) === 'function') { waitCb(); }
       _removeTaskIfEmpty(info, taskname, taskCb);
       return true;
     }
@@ -107,8 +108,8 @@ var SeqEngine = new function() {
     }
   }
 
-  function _notifyTask(info, taskname, key, cb) {
-    if (_removeWaitKey(info, taskname, key, cb)) {
+  function _notifyTask(info, taskname, key, cb, taskCb) {
+    if (_removeWaitKey(info, taskname, key, cb, taskCb)) {
       if (Object.keys(info.running).length === 0) { _nextTasks(info); }
     }
   }

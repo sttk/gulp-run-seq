@@ -7,6 +7,10 @@ gulp.task('task0', [[ 'task1', ['task2', 'task3'],'task4' ]], function(end) {
   end(function() { console.log('task0'); });
 });
 
+gulp.task('task00', [ 'task1', 'task2', 'task3', 'task4' ], function(end) {
+  end(function() { console.log('task0'); });
+});
+
 gulp.task('task1', function(end) {
   setTimeout(end.with(function() { console.log('task1'); }), 1000);
 });

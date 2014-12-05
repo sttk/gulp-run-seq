@@ -20,7 +20,7 @@ function Ender(taskname, taskCb) {
       return _ender;
     };
     _ntf = function(key, cb) {
-      SeqEngine.notifyTask(info, taskname, key, cb);
+      SeqEngine.notifyTask(info, taskname, key, cb, taskCb);
       return _ender;
     };
   } else {
@@ -28,14 +28,20 @@ function Ender(taskname, taskCb) {
       if (typeof(cb) === 'function') { cb(); }
       if (typeof(taskCb) === 'function') { taskCb(); }
     };
+    var _waitKeys = {};
     _wait = function() {
       var keys = Array.prototype.slice.call(arguments);
       var cb = _popCallback(keys);
+      keys.forEach(function(key) { _waitKeys[key] = true; });
       if (cb != null) { cb(); }
       return _ender;
     };
     _ntf = function(key, cb) {
       if (typeof(cb) === 'function') { cb(); }
+      delete _waitKeys[key];
+      if (Object.keys(_waitKeys).length === 0) {
+        if (typeof(taskCb) === 'function') { taskCb(); }
+      }
       return _ender;
     };
   }
