@@ -6,6 +6,7 @@ var uglify = require('gulp-uglify');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var concat = require('gulp-concat');
+require('./index.js');
 
 
 var srcs = [

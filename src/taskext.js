@@ -52,14 +52,12 @@ gulp.task = function(name, dep, fn) {
     return originalTask.call(gulp, name, dep, newFn);
   }
 
-  (function(){
-    if (Array.isArray(dep) && dep.length === 1 && Array.isArray(dep[0])) {
-      return _createSeqTask(name, dep[0], fn);
-    } else {
-      if (!fn && (typeof(dep) === 'function')) { fn = dep; dep = undefined; }
-      return _createTask(name, dep, fn);
-    }
-  }());
+  if (Array.isArray(dep) && dep.length === 1 && Array.isArray(dep[0])) {
+    return _createSeqTask(name, dep[0], fn);
+  } else {
+    if (!fn && (typeof(dep) === 'function')) { fn = dep; dep = undefined; }
+    return _createTask(name, dep, fn);
+  }
 };
 
 }());
