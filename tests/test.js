@@ -43,14 +43,12 @@ gulp.task('task3', function(end) {
   gulp.src('data/glob1')
     .pipe(gulp.dest('dest'))
     .on('end', end.notifier('w1', function(seq) {
-      console.log('===> task3(a) run in order? ' + seq);
       console.log('===> task3(a) end.');
     }));
   console.log('===> task3: copy to dest/glob2.');
   gulp.src('data/glob2')
     .pipe(gulp.dest('dest'))
     .on('end', end.notifier('w2', function(seq) {
-      console.log('===> task3(a) run in order? ' + seq);
       console.log('===> task3(b) end.');
     }));
 });
@@ -67,14 +65,12 @@ gulp.task('task4', [[ 'task4.1', 'task4.2' ]], function(end) {
 
 gulp.task('task4.1', function(end) {
   setTimeout(end.with(function(seq) {
-    console.log('===> task4.1 run in order? ' + seq);
     if (seq) { console.log('===> task4.1 end.'); }
   }), 2000);
 });
 
 gulp.task('task4.2', function(end) {
   setTimeout(end.with(function(seq) {
-    console.log('===> task4.2 run in order? ' + seq);
     if (seq) { console.log('===> task4.2 end.'); }
   }), 1000);
 });
@@ -94,7 +90,7 @@ gulp.task('task5', function(end) {
           if (e3) { console.log(e3); return; }
           console.log('===> task5: delete dest.');
           end.notify('w1', function(seq) {
-            console.log('===> task5(w1) run in order? ' + seq);
+            console.log('===> task5: notify w1');
           });
         });
       });
@@ -104,7 +100,7 @@ gulp.task('task5', function(end) {
     if (err) { console.log(err); return; }
     console.log('===> task5: delete data/glob1, data/glob2');
     end.notify('w2', function(seq) {
-      console.log('===> task5(w2) run in order? ' + seq);
+      console.log('===> task5: notify w2');
     });
   });
 });

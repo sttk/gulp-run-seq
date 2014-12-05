@@ -7,11 +7,10 @@ function Ender(taskname, taskCb) {
   var info = SeqEngine.getInfoByRunningTask(taskname);
   if (info != null) {
     _ender = function(cb) {
-      var f = function() {
+      SeqEngine.endTask(info, taskname, function() {
         if (typeof(cb) === 'function') { cb(); }
         if (typeof(taskCb) === 'function') { taskCb(); }
-      };
-      SeqEngine.endTask(info, taskname, f);
+      });
     };
     _wait = function(/*...keys [, cb]*/) {
       var keys = Array.prototype.slice.call(arguments);
@@ -28,18 +27,18 @@ function Ender(taskname, taskCb) {
       if (typeof(cb) === 'function') { cb(); }
       if (typeof(taskCb) === 'function') { taskCb(); }
     };
-    var _waitKeys = {};
+    var _waitKeys = {}, _waitCb;
     _wait = function() {
       var keys = Array.prototype.slice.call(arguments);
-      var cb = _popCallback(keys);
-      keys.forEach(function(key) { _waitKeys[key] = true; });
-      if (cb != null) { cb(); }
+      _waitCb = _popCallback(keys);
+      for (var i=0, n=keys.length; i<n; i++) { _waitKeys[keys[i]] = true; }
       return _ender;
     };
     _ntf = function(key, cb) {
       if (typeof(cb) === 'function') { cb(); }
       delete _waitKeys[key];
       if (Object.keys(_waitKeys).length === 0) {
+        if (typeof(_waitCb) === 'function') { _waitCb(); }
         if (typeof(taskCb) === 'function') { taskCb(); }
       }
       return _ender;

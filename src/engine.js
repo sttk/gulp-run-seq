@@ -25,14 +25,14 @@ var SeqEngine = new function() {
   }
 
   function _getInfoByRunner(runner) {
-    for (var i=0; i<_runInfos.length; i++) {
+    for (var i=0, n=_runInfos.length; i<n; i++) {
       if (_runInfos[i].runner === runner) { return _runInfos[i]; }
     }
     return null;
   }
 
   function _getInfoByRunningTask(taskname) {
-    for (var i=0; i<_runInfos.length; i++) {
+    for (var i=0, n=_runInfos.length; i<n; i++) {
       var info = _runInfos[i];
       if (taskname in info.running) { return info; }
     }
@@ -50,12 +50,11 @@ var SeqEngine = new function() {
     if (info.tasks.length > 0) { return false; }
     var idx = _runInfos.indexOf(info);
     if (idx >= 0) { _runInfos.splice(idx, 1); }
-    if (typeof(info.callback) === 'function') { info.callback(info.argument); }
+    if (typeof(info.callback) === 'function') { info.callback(); }
     return true;
   }
 
   function _removeTaskIfEmpty(info, taskname, cb) {
-    if (!(taskname in info.running)) { return false; }
     if (Object.keys(info.running[taskname]).length > 0) { return false; }
     delete info.running[taskname];
     if (typeof(cb) === 'function') { cb(); }
@@ -64,19 +63,19 @@ var SeqEngine = new function() {
 
   function _entryWaitKeys(info, taskname, keys, cb) {
     var running = info.running[taskname];
-    for (var i=0; i<keys.length; i++) { running[keys[i]] = cb; }
+    for (var i=0, n=keys.length; i<n; i++) { running[keys[i]] = cb; }
   }
 
   function _removeWaitKey(info, taskname, key, cb, taskCb) {
     if (typeof(cb) === 'function') { cb(); }
-    if (key in info.running[taskname]) {
-      var waitCb = info.running[taskname][key];
-      delete info.running[taskname][key];
+    if (!(key in info.running[taskname])) { return false; }
+    var waitCb = info.running[taskname][key];
+    delete info.running[taskname][key];
+    _removeTaskIfEmpty(info, taskname, function() {
       if (typeof(waitCb) === 'function') { waitCb(); }
-      _removeTaskIfEmpty(info, taskname, taskCb);
-      return true;
-    }
-    return false;
+      if (typeof(taskCb) === 'function') { taskCb(); }
+    });
+    return true;
   }
 
   function _nextTasks(info) {
@@ -84,7 +83,7 @@ var SeqEngine = new function() {
     var tasks = info.tasks.shift();
     if (! Array.isArray(tasks)) { tasks = [tasks]; }
     var taskset = [];
-    for (var i=0; i<tasks.length; i++) {
+    for (var i=0, n=tasks.length; i<n; i++) {
       var taskname = tasks[i];
       if (typeof(taskname) !== 'string') { continue; }
       if (_isRunnedTask(taskname)) { continue; }

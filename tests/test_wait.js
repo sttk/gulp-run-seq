@@ -8,7 +8,7 @@ gulp.task('task0', [[ 'task1', ['task2', 'task3'],'task4' ]], function(end) {
 });
 
 gulp.task('task00', [ 'task1', 'task2', 'task3', 'task4' ], function(end) {
-  end(function() { console.log('task0'); });
+  end(function() { console.log('task00'); });
 });
 
 gulp.task('task1', function(end) {
@@ -26,9 +26,11 @@ gulp.task('task3', function(end) {
 });
 
 gulp.task('task4', function(end) {
-  end.wait('w0', 'w1', function() { console.log('task4'); });
+  end.wait('w0', 'w1', 'w2', 'w3', function() { console.log('task4'); });
   setTimeout(end.notifier('w0', function() { console.log('task4 w0'); }),1000);
   setTimeout(end.notifier('w1', function() { console.log('task4 w1'); }),500);
+  setTimeout(end.notifier('w2', function() { console.log('task4 w2'); }),500);
+  setTimeout(end.notifier('w3', function() { console.log('task4 w3'); }),500);
 });
 
 
