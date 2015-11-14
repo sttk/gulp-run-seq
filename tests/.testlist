@@ -1,17 +1,17 @@
 gulp --gulpfile tests/data_del.js
 gulp --gulpfile tests/test.js
 gulp --gulpfile tests/test.js no_order
-
 gulp --gulpfile tests/test_async.js
 gulp --gulpfile tests/test_async.org.js
-
 gulp --gulpfile tests/test_async_cb.js
 gulp --gulpfile tests/test_async_cb.org.js
-
+gulp --gulpfile tests/test_async_nosleep.js
+gulp --gulpfile tests/test_async_nosleep.org.js
+gulp --gulpfile tests/test_run_task_once.js
+gulp --gulpfile tests/test_seq.js
 gulp --gulpfile tests/test_sync.js
 gulp --gulpfile tests/test_sync_cb.js
 gulp --gulpfile tests/test_sync_nosleep.js
-gulp --gulpfile tests/test_seq.js
-gulp --gulpfile tests/test_run_task_once.js
 gulp --gulpfile tests/test_wait.js
 gulp --gulpfile tests/test_wait.js task00
+gulp --gulpfile tests/data_del.js
