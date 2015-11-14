@@ -1,7 +1,6 @@
 'use strict';
 
-var gulp = require('gulp');
-require('../index.js');
+var gulp = require('../index.js');
 
 gulp.task('task0', function(end) {
 //gulp.__start({task:'task0'});

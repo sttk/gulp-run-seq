@@ -1,7 +1,6 @@
 'use strict';
 
-var gulp = require('gulp');
-require('../index.js');
+var gulp = require('../index.js');
 
 gulp.task('task0', [[ 'task1', ['task2', 'task3'],'task4' ]], function(end) {
   end(function() { console.log('task0'); });

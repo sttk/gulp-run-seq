@@ -2,7 +2,6 @@
 
 var gulp = require('gulp');
 
-
 gulp.task('task0', function() {
   setTimeout(function() { console.log('task0 end.'); }, 2000);
 });

@@ -1,7 +1,6 @@
 'use strict';
 
-var gulp = require('gulp');
-require('../index.js');
+var gulp = require('../index.js');
 
 var fs = require('fs');
 var del = require('del');

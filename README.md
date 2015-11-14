@@ -2,8 +2,6 @@
 
 Gulp plugin to run tasks in order.
 
-> Deprecated the direct operations with the object returned by `require('gulp-req-seq'))`, for example, `grunseq.start(...)` or `var ender = grunseq.ender(...)`, etc.
-
 ## Install
 
 Install `gulp-run-seq` with npm:
@@ -17,8 +15,8 @@ $ npm install --save-dev gulp-run-seq
 First, load `gulp-run-seq` module in your gulpfile.js.
 
 ```js
-var gulp = require('gulp');
-require('gulp-run-seq');
+//var gulp = require('gulp');  // not needed.
+var gulp = require('gulp-run-seq');  // returns the gulp object.
 ```
 
 Then, you can write tasks so that they are runned in order as follows.

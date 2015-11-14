@@ -6,13 +6,13 @@ var uglify = require('gulp-uglify');
 var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var concat = require('gulp-concat');
-require('./index.js');
 
 
 var srcs = [
   'src/engine.js',
   'src/ender.js',
   'src/taskext.js',
+  'src/exports.js',
 ];
 
 

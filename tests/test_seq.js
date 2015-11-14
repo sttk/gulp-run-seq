@@ -1,8 +1,6 @@
 'use strict';
 
-var gulp = require('gulp');
-require('../index.js');
-
+var gulp = require('../index.js');
 
 gulp.task('task0', function(end) {
   setTimeout(end.with(function(){ console.log('task0 end.'); }), 2000);
