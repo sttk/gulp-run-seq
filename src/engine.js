@@ -55,10 +55,11 @@ var SeqEngine = new function() {
   }
 
   function _removeTaskIfEmpty(info, taskname, cb) {
-    if (!(taskname in info.running)) { return true; }
-    if (Object.keys(info.running[taskname]).length > 0) { return false; }
-    delete info.running[taskname];
-    if (typeof(cb) === 'function') { cb(); }
+    if (taskname in info.running) {
+      if (Object.keys(info.running[taskname]).length > 0) { return false; }
+      delete info.running[taskname];
+    }
+    if (typeof(cb) === 'function') { return cb(); }
     return true;
   }
 
@@ -75,6 +76,7 @@ var SeqEngine = new function() {
     _removeTaskIfEmpty(info, taskname, function() {
       if (typeof(waitCb) === 'function') { waitCb(); }
       if (typeof(taskCb) === 'function') { taskCb(); }
+      return true;
     });
     return true;
   }

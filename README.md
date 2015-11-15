@@ -125,46 +125,66 @@ gulp.task('task2.2', function(end) {  // Needs `end` if an asynchronous task
 
 `gulp-run-seq` module provides following functions:
 
-### Ender([callback])
+### Ender([fn | err])
 
 This function object is passed to a task function as an argument, and is used to notify the end of a running task.
 By this notification, the next task is started.
-If a callback function is passed, it is called after the task end.
+If a `fn` function is passed, it is called after the task end.
+If a `err` object which is not a function is passed, it aborts the gulp.
 
-- **callback** `{function}` [callback] - A callback function.
+- **fn** `{function}` - A function called after the task end. .
+- **err** `{object}` - An object which is not a function.
 
-### Ender#with([callback])
+### Ender#with([fn])
 
 This function returns a function object which executes the Ender function in it.
-This function enables to write for example as ``stream.on('end', end.with(cb))`` instead of ``stream.on('end', function(){ end(cb); })``.
+This function enables to write for example as ``stream.on('end', end.with(fn))`` instead of ``stream.on('end', function(){ end(fn); })``.
 
-### Ender#wait(keyword, ... [, callback])
+- **fn** `{function}` - A function called after the task end. .
+
+### Ender#wait(keyword, ... [, fn])
 
 This function makes a task wait until the Ender object receive notifications to release the waits for all keywords.
-If a callback function is passed, it is called after the wait is released.
+If a `fn` function is passed, it is called after the wait is released.
 
 - **keyword** `{...string}` keyword - Keywords.
-- **callback** `{function}` [callback] - A callback function.
+- **fn** `{function}` - A function called after the wait is released. .
 
 ### Ender#notify(keyword [, callback])
 
 This function notifys a release of a wait for the specified keyword to the Ender object. 
-If a callback function is passed, it is called after the notification.
+If a `fn` function is passed, it is called after the notification.
 
 - **keyword** `{...string}` keyword - Keywords.
-- **callback** `{function}` [callback] - A callback function.
+- **fn** `{function}` - A function called after the notification. .
 
-### Ender#notifier(keyword [, callback])
+### Ender#notifier(keyword [, fn])
 
 This function returns a function object which executes a `notify` function in it.
-This function enables to write for example as ``stream.on('end', end.notifier(key, cb))`` instead of ``stream.on('end', function(){ end.notify(key, cb); })``.
+This function enables to write for example as: ``stream.on('end', end.notifier(key, fn))`` instead of ``stream.on('end', function(){ end.notify(key, fn); })``.
 
 - **keyword** `{...string}` keyword - Keywords.
-- **callback** `{function}` [callback] - A callback function.
+- **fn** `{function}` - A function called after the notification. .
+
+### Ender#pass(fn)
+
+This function returns a function object which executes the Ender function in it.
+This function always ignores any error.
+This function enables to write for example as: ``stream.on('end', end.pass(function() { console.log('finish.'); }));``.
+
+- **fn** `{function}` - A function called after the task end. .
+
+### Ender#abort(fn)
+
+This function returns a function object which executes the Ender function in it.
+This function always aborts the gulp and returns the exit code which is not 0.
+This function enables to write for example as: ``stream.on('end', end.abort(function() { console.log('finish.'); }));``.
+
+- **fn** `{function}` - A function called after the task end. .
 
 ## License
 
-Copyright (C) 2014 Takayuki Sato.
+Copyright (C) 2014-2015 Takayuki Sato.
 
 `gulp-run-seq` is free software under [MIT](http://opensource.org/licenses/MIT) License.
 See the file LICENSE in this distribution for more details.

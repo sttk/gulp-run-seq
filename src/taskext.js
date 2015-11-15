@@ -12,10 +12,6 @@ gulp.emit = function(event, args) {
 var originalTask = gulp.task;
 gulp.task = function(name, dep, fn) {
 
-  function _runCb(cb) {
-    if (typeof(cb) === 'function') { cb(); }
-  }
-
   function _newName(name) {
     var n1 = 33 + Math.floor((126-32) * Math.random());
     var n2 = 33 + Math.floor((126-32) * Math.random());
@@ -28,10 +24,9 @@ gulp.task = function(name, dep, fn) {
     _seqStartTasks[name] = true;
     var newName = _newName(name);
     var newDep = dep.concat(newName);
-    var fn = function(cb) {
-      SeqEngine.startTasks(newDep, new Ender(name, cb));
-    };
-    originalTask.call(gulp, name, undefined, fn);
+    originalTask.call(gulp, name, undefined, function(cb) {
+      SeqEngine.startTasks(newDep, new Ender(name));
+    });
     return newName;
   }
 
@@ -42,7 +37,7 @@ gulp.task = function(name, dep, fn) {
 
   function _createTask(name, dep, fn) {
     var newFn;
-    if (!fn) {
+    if (!fn || typeof(fn) != 'function') {
       newFn = function(cb) { (new Ender(name, cb))(); };
     } else if (fn.length === 0) {
       newFn = function(cb) { var end = new Ender(name); fn(); end(cb); };

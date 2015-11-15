@@ -1,5 +1,6 @@
 gulp --gulpfile tests/data_del.js
 gulp --gulpfile tests/test.js
+gulp --gulpfile tests/data_del.js
 gulp --gulpfile tests/test.js no_order
 gulp --gulpfile tests/test_async.js
 gulp --gulpfile tests/test_async.org.js
@@ -14,4 +15,30 @@ gulp --gulpfile tests/test_sync_cb.js
 gulp --gulpfile tests/test_sync_nosleep.js
 gulp --gulpfile tests/test_wait.js
 gulp --gulpfile tests/test_wait.js task00
+gulp --gulpfile tests/test_error.js test00
+gulp --gulpfile tests/test_error.js test01
+gulp --gulpfile tests/test_error.js test02
+gulp --gulpfile tests/test_error.js test03
+gulp --gulpfile tests/test_error.js test04
+gulp --gulpfile tests/test_error.js test05
+gulp --gulpfile tests/test_error.js test06
+gulp --gulpfile tests/test_error_ignore.js test00
+gulp --gulpfile tests/test_error_ignore.js test01
+gulp --gulpfile tests/test_error_ignore.js test02
+gulp --gulpfile tests/test_error_ignore.js test03
+gulp --gulpfile tests/test_error_ignore.js test04
+gulp --gulpfile tests/test_error_ignore.js test05
+gulp --gulpfile tests/test_error_ignore.js test06
+gulp --gulpfile tests/test_error_abort.js test00
+gulp --gulpfile tests/test_error_abort.js test01
+gulp --gulpfile tests/test_error_abort.js test02
+gulp --gulpfile tests/test_error_abort.js test03
+gulp --gulpfile tests/test_error_abort.js test04
+gulp --gulpfile tests/test_error_abort.js test05
+gulp --gulpfile tests/test_error_abort.js test06
+gulp --gulpfile tests/test_error.org.js test00
+gulp --gulpfile tests/test_error.org.js test01
+gulp --gulpfile tests/test_error.org.js test02
+gulp --gulpfile tests/test_error.org.js test04
+gulp --gulpfile tests/test_error.org.js test05
 gulp --gulpfile tests/data_del.js
