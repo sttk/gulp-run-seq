@@ -25,7 +25,7 @@ gulp.task = function(name, dep, fn) {
     var newName = _newName(name);
     var newDep = dep.concat(newName);
     originalTask.call(gulp, name, undefined, function(cb) {
-      SeqEngine.startTasks(newDep, new Ender(name));
+      SeqEngine.startTasks(newDep, new Ender(name, cb));
     });
     return newName;
   }

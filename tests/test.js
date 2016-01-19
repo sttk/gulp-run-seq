@@ -76,17 +76,13 @@ gulp.task('task4.2', function(end) {
 
 gulp.task('task5', function(end) {
   end.wait('w1', 'w2');
-  del('dest/glob0', function (e0) {
-    if (e0) { console.log(e0); return; }
+  fs.unlink('dest/glob0', function (e0) {
     console.log('===> task5: delete dest/glob0.');
-    del('dest/glob1', function(e1) {
-      if (e1) { console.log(e1); return; }
+    fs.unlink('dest/glob1', function(e1) {
       console.log('===> task5: delete dest/glob1.');
-      del('dest/glob2', function(e2) {
-        if (e2) { console.log(e2); return; }
+      fs.unlink('dest/glob2', function(e2) {
         console.log('===> task5: delete dest/glob2.');
-        del('dest', function(e3) {
-          if (e3) { console.log(e3); return; }
+        fs.unlink('dest', function(e3) {
           console.log('===> task5: delete dest.');
           end.notify('w1', function(seq) {
             console.log('===> task5: notify w1');
@@ -95,11 +91,13 @@ gulp.task('task5', function(end) {
       });
     });
   });
-  del(['data/glob1','data/glob2'], function(err) {
-    if (err) { console.log(err); return; }
-    console.log('===> task5: delete data/glob1, data/glob2');
-    end.notify('w2', function(seq) {
-      console.log('===> task5: notify w2');
+  fs.unlink('data/glob1', function(err) {
+    console.log('===> task5: delete data/glob1');
+    fs.unlink('data/glob2', function(err) {
+      console.log('===> task5: delete data/glob2');
+      end.notify('w2', function(seq) {
+        console.log('===> task5: notify w2');
+      });
     });
   });
 });

@@ -41,4 +41,5 @@ gulp --gulpfile tests/test_error.org.js test01
 gulp --gulpfile tests/test_error.org.js test02
 gulp --gulpfile tests/test_error.org.js test04
 gulp --gulpfile tests/test_error.org.js test05
+gulp --gulpfile tests/test_fix_issue3.js
 gulp --gulpfile tests/data_del.js
