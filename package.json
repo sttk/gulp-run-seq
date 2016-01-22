@@ -1,6 +1,6 @@
 {
   "name": "gulp-run-seq",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Gulp plugin to run tasks in order.",
   "main": "index.js",
   "scripts": {
